@@ -95,10 +95,8 @@ export class StatsComponent implements OnInit {
         return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
       });
 
-    // this.data.labels = uniqueDates;
-
     // find amount of visits for all dates
-    var  selectedCabinets = this.statsForm.get('cabinets').value,
+    let  selectedCabinets = this.statsForm.get('cabinets').value,
         skipCheck = selectedCabinets.every(elem => elem === false) || selectedCabinets.every(elem => elem === true);
 
     this.cabinets.forEach((cabinet, index) => {

@@ -2,24 +2,33 @@
   <div class="col-sm-5">
     <form [formGroup]="statsForm">
       <div class="form-group">
-        <label>Date form:</label><ng-datepicker [options]=datepickerOptions formControlName="dateFrom"></ng-datepicker>
+        <label>Date from:</label>
+        <ng-datepicker [options]=datepickerOptions formControlName="dateFrom"></ng-datepicker>
       </div>
       <div class="form-group">
-        <label>Date to:</label><ng-datepicker [options]=datepickerOptions formControlName="dateTo"></ng-datepicker>
+        <label>Date to:</label>
+        <ng-datepicker [options]=datepickerOptions formControlName="dateTo"></ng-datepicker>
       </div>
       <br>
       <h4>Select cabinets: </h4>
       <div formArrayName="cabinets">
         <div  *ngFor="let control of statsForm.get('cabinets')['controls']; let i = index;">
           <label for="checkbox-{{i}}">Cabinet {{i}}</label>
-          <input type="checkbox" id="checkbox-{{i}}" value="control.value" [formControl]="control" />
+          <input
+            type="checkbox"
+            id="checkbox-{{i}}"
+            value="control.value"
+            [formControl]="control"/>
         </div>
       </div>
     </form>
   </div>
   <div class="col-md-7">
     <div style="display: block;">
-      <canvas *ngIf="data.datasets.length" #mainChart="base-chart" baseChart width="400" height="400"
+      <canvas *ngIf="data.datasets.length"
+              #mainChart="base-chart"
+              baseChart
+              width="400" height="400"
               [datasets]="data.datasets"
               [labels]="data.labels"
               [options]="data.options"

@@ -11,15 +11,15 @@ import * as _ from 'lodash';
   styleUrls: ['./cabinet-edit.component.css'],
   encapsulation: ViewEncapsulation.None
 })
+
 export class CabinetEditComponent implements OnInit, OnDestroy {
   id: number;
   editMode = false;
   cabinetForm: FormGroup;
-
   routeSubscription: Subscription;
   formSubscription: Subscription;
-
   datesIsValid = true;
+  isValid = true;
 
   constructor(private route: ActivatedRoute,
               private cabinetService: CabinetsService,
@@ -34,7 +34,6 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
           if (params['id']) {
             this.editMode = true;
             this.id = +params['id'];
-            // this.editMode = params['id'] != null;
           } else {
             this.editMode = false;
           }
@@ -73,6 +72,11 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
 
     this.formSubscription = this.cabinetForm.valueChanges.subscribe(
       () => {
+        if (!this.cabinetForm.valid && this.cabinetForm.touched) {
+          this.isValid = false;
+        } else {
+          this.isValid = true;
+        }
         this.validateDates();
       });
 
@@ -99,29 +103,26 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
     if (this.editMode) {
       this.cabinetService.updateCabinet(this.id, this.cabinetForm.value);
     } else {
+      let id = this.cabinetService.getCabinetsCount() - 1;
       this.cabinetService.addCabinet(this.cabinetForm.value);
-      this.router.navigate(['/cabinets', this.cabinetService.getCabinetsCount() - 1, 'edit']);
+      this.router.navigate(['/cabinets', id, 'edit']);
     }
   }
 
   validateDates() {
     if (this.cabinetForm) {
-      var dates = [], dublicates = [],
+      let dates = [],
+        duplicates = [],
         controls = this.cabinetForm.get('days')['controls'];
 
       controls.forEach((el) => {
         dates.push(el.value.date.setHours(0, 0, 0, 0));
       });
 
-      dublicates = _.filter(dates, v => _.filter(dates, v1 => v1 === v).length > 1);
+      duplicates = _.filter(dates, v => _.filter(dates, v1 => v1 === v).length > 1);
 
-      if (dublicates.length) {
-        this.datesIsValid = false;
-      } else {
-        this.datesIsValid = true;
-      }
+      this.datesIsValid = !!duplicates.length;
     }
-
   }
 
   onDeleteCabitent() {

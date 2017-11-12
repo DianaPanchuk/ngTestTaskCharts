@@ -1,7 +1,10 @@
 <form [formGroup]="cabinetForm" (ngSubmit)="onSubmit()">
   <div class="clearfix">
     <div class="pull-right">
-      <button class="btn btn-default" type="button" (click)="onDeleteCabitent()">Delete Cabinet</button>
+      <button
+        class="btn btn-default"
+        type="button"
+        (click)="onDeleteCabitent()">Delete Cabinet</button>
     </div>
   </div>
   <div class="form-group" formArrayName="days">
@@ -22,15 +25,20 @@
         <button
           type="button"
           class="btn btn-danger"
-          (click)="onDeleteDay(i)">x</button>
+          (click)="onDeleteDay(i)">x
+        </button>
       </div>
     </div>
   </div>
-  <p *ngIf="!cabinetForm.valid && cabinetForm.touched">please, fill the fileds correctly</p>
+  <p *ngIf="!isValid">please, fill the fileds correctly</p>
   <p *ngIf="!this.datesIsValid">date has to be unique</p>
   <button
     type="button"
     class="btn btn-success"
-    (click)="onAddDay()">Add Day</button>
-  <button class="btn btn-default" [disabled]="!cabinetForm.valid || !this.datesIsValid" type="submit">Save</button>
+    (click)="onAddDay()">Add Day
+  </button>
+  <button
+    class="btn btn-default"
+    [disabled]="!cabinetForm.valid || !this.datesIsValid"
+    type="submit">Save</button>
 </form>
