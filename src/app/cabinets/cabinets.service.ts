@@ -4,32 +4,7 @@ import { LocalStorageService } from 'ngx-webstorage';
 @Injectable()
 export class CabinetsService {
   private cabinetsRetrieved = false;
-  private cabinets = [
-    /*{
-      color: 'rgba(54, 162, 235, 1)',
-      days: [
-        {date: new Date('10/9/2017'), amount: 10},
-        {date: new Date('10/8/2017'), amount: 11},
-        {date: new Date('10/7/2017'), amount: 12}
-      ]
-    },
-    {
-      color: 'rgba(255, 206, 86, 1)',
-      days: [
-        {date: new Date('10/8/2017'), amount: 5},
-        {date: new Date('10/7/2017'), amount: 6},
-        {date: new Date('10/6/2017'), amount: 7}
-      ]
-    },
-      {
-        color: 'rgba(75, 192, 192, 1)',
-        days: [
-        {date: new Date('10/7/2017'), amount: 9},
-        {date: new Date('10/6/2017'), amount: 8},
-        {date: new Date('10/5/2017'), amount: 7}
-      ]
-    }*/
-  ];
+  private cabinets = [];
 
   constructor(private storage: LocalStorageService) { }
 

@@ -30,7 +30,6 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params
       .subscribe(
         (params: Params) => {
-
           if (params['id']) {
             this.editMode = true;
             this.id = +params['id'];
@@ -45,23 +44,24 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
 
   private initForm() {
     let cabinetDays = new FormArray([]),
-      color = '';
+      color = '',
+      cabinet;
     if (this.editMode) {
-      const cabinet = this.cabinetService.getCabinet(this.id);
+      cabinet = this.cabinetService.getCabinet(this.id);
       color = cabinet.color;
+    }
 
-      if (cabinet['days']) {
-        for (const day of cabinet.days) {
-          cabinetDays.push(
-            new FormGroup({
-              'date': new FormControl(day.date, [Validators.required]),
-              'amount': new FormControl(day.amount, [
-                Validators.required,
-                Validators.pattern(/^[0-9]\d*$/)
-              ])
-            })
-          );
-        }
+    if (cabinet && cabinet['days']) {
+      for (const day of cabinet.days) {
+        cabinetDays.push(
+          new FormGroup({
+            'date': new FormControl(day.date, [Validators.required]),
+            'amount': new FormControl(day.amount, [
+              Validators.required,
+              Validators.pattern(/^[0-9]\d*$/)
+            ])
+          })
+        );
       }
     }
 
@@ -72,11 +72,7 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
 
     this.formSubscription = this.cabinetForm.valueChanges.subscribe(
       () => {
-        if (!this.cabinetForm.valid && this.cabinetForm.touched) {
-          this.isValid = false;
-        } else {
-          this.isValid = true;
-        }
+        this.isValid = !(!this.cabinetForm.valid && this.cabinetForm.touched);
         this.validateDates();
       });
 
@@ -103,7 +99,7 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
     if (this.editMode) {
       this.cabinetService.updateCabinet(this.id, this.cabinetForm.value);
     } else {
-      let id = this.cabinetService.getCabinetsCount() - 1;
+      const id = this.cabinetService.getCabinetsCount();
       this.cabinetService.addCabinet(this.cabinetForm.value);
       this.router.navigate(['/cabinets', id, 'edit']);
     }
@@ -121,7 +117,7 @@ export class CabinetEditComponent implements OnInit, OnDestroy {
 
       duplicates = _.filter(dates, v => _.filter(dates, v1 => v1 === v).length > 1);
 
-      this.datesIsValid = !!duplicates.length;
+      this.datesIsValid = !duplicates.length;
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DatepickerOptions } from 'ng2-datepicker';
 import { CabinetsService } from '../cabinets/cabinets.service';
 import { Observable } from 'rxjs/Observable';
@@ -9,7 +9,8 @@ import { BaseChartDirective } from 'ng2-charts';
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.css']
+  styleUrls: ['./stats.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class StatsComponent implements OnInit {
   cabinets;
@@ -46,14 +47,14 @@ export class StatsComponent implements OnInit {
 
   initFilter() {
     let dates = [];
-    this.cabinets.forEach((c, i) => {
-      c.days.forEach((el) => {
+    this.cabinets.forEach((cabinet) => {
+      cabinet.days.forEach((el) => {
         dates.push(el.date);
       });
     });
 
     let cabinetsList = new FormArray([]);
-    this.cabinets.forEach((el, i) => {
+    this.cabinets.forEach(() => {
       cabinetsList.push(
         new FormControl(false)
       );
@@ -76,33 +77,33 @@ export class StatsComponent implements OnInit {
         values = [];
 
     // get unique dates
-    this.cabinets.forEach((c, i) => {
-      c.days.forEach((el) => {
-        if (el.date.getTime() >= this.statsForm.get('dateFrom').value.getTime() &&
-          el.date.getTime() <= this.statsForm.get('dateTo').value.getTime()) {
-          dates.push(el.date);
+    this.cabinets.forEach((cabinet) => {
+      cabinet.days.forEach((day) => {
+        if (day.date.getTime() >= this.statsForm.get('dateFrom').value.getTime() &&
+          day.date.getTime() <= this.statsForm.get('dateTo').value.getTime()) {
+          dates.push(day.date);
         }
       });
     });
 
     let uniqueDatesUnformated = [],
       uniqueDates = dates
-      .map(s => s.toString())
-      .filter((s, i, a) => a.indexOf(s) === i)
-      .map(s => {
-        var d = new Date(s);
-        uniqueDatesUnformated.push(d);
-        return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-      });
+        .map(date => date.toString())
+        .filter((date, index, a) => a.indexOf(date) === index)
+        .map(date => {
+          let uniqueDate = new Date(date);
+          uniqueDatesUnformated.push(uniqueDate);
+          return `${uniqueDate.getDate()}/${uniqueDate.getMonth() + 1 }/${uniqueDate.getFullYear()}`;
+        });
 
     // find amount of visits for all dates
-    let  selectedCabinets = this.statsForm.get('cabinets').value,
+    let selectedCabinets = this.statsForm.get('cabinets').value,
         skipCheck = selectedCabinets.every(elem => elem === false) || selectedCabinets.every(elem => elem === true);
 
     this.cabinets.forEach((cabinet, index) => {
       const color = cabinet.color;
       this.data.colors.push(color);
-      var item = {
+      let item = {
           label: `Cabinet ${index}`,
           fill: false,
           lineTension: 0,
@@ -113,26 +114,21 @@ export class StatsComponent implements OnInit {
           pointBackgroundColor: 'white',
           data: []
         };
-      uniqueDatesUnformated.forEach((c, i) => {
-
-        var count = cabinet.days.find((d) => {
-          if ( d.date.getTime()  === c.getTime() ) {
-            return d.amount;
+      uniqueDatesUnformated.forEach((cabinetItem) => {
+        let count = cabinet.days.find((day) => {
+          if ( day.date.getTime()  === cabinetItem.getTime() ) {
+            return day.amount;
           }
         });
-
         if (count) {
           item.data.push(count.amount);
         } else {
           item.data.push(0);
         }
       });
-
-      if (!skipCheck && !selectedCabinets[index]) {
-      } else {
+      if (skipCheck || !skipCheck && selectedCabinets[index]) {
         values.push(item);
       }
-
     });
 
     this.data.labels = uniqueDates;
