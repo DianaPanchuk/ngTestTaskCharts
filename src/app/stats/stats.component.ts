@@ -73,19 +73,10 @@ export class StatsComponent implements OnInit {
   }
 
   getStatsData() {
-    let dates = [],
+    let dates = this.getFiltredDates(),
         values = [];
 
     // get unique dates
-    this.cabinets.forEach((cabinet) => {
-      cabinet.days.forEach((day) => {
-        if (day.date.getTime() >= this.statsForm.get('dateFrom').value.getTime() &&
-          day.date.getTime() <= this.statsForm.get('dateTo').value.getTime()) {
-          dates.push(day.date);
-        }
-      });
-    });
-
     let uniqueDatesUnformated = [],
       uniqueDates = dates
         .map(date => date.toString())
@@ -134,6 +125,19 @@ export class StatsComponent implements OnInit {
     this.data.labels = uniqueDates;
     this.data.datasets = values;
     this.update(uniqueDates, values);
+  }
+
+  getFiltredDates() {
+    let dates = [];
+    this.cabinets.forEach((cabinet) => {
+      cabinet.days.forEach((day) => {
+        if (day.date.getTime() >= this.statsForm.get('dateFrom').value.getTime() &&
+          day.date.getTime() <= this.statsForm.get('dateTo').value.getTime()) {
+          dates.push(day.date);
+        }
+      });
+    });
+    return dates;
   }
 
   update(labels, dataset) {
