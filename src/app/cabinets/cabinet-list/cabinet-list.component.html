@@ -1,0 +1,10 @@
+<div>
+  <div *ngFor="let cabinet of cabinets; let i = index;">
+    <a
+      [routerLink]="[i, 'edit']"
+      routerLinkActive="active"
+      class="list-group-item">
+      <h4 class="list-group-item-heading">Cabinet - {{i}}</h4>
+    </a>
+  </div>
+</div>
